@@ -18,6 +18,9 @@ export default function FAQ() {
           <div className="font-sans flex items-baseline tracking-tight">
             <span className="text-[22px] sm:text-2xl font-bold text-white leading-none">4track</span>
             <span className="text-[14px] sm:text-[16px] font-medium text-white/60 ml-0.5 leading-none">.my.id</span>
+            <span className="ml-2 text-[10px] font-medium border border-white/20 text-white/50 px-1.5 py-0.5 rounded-[4px] leading-none self-center">
+              v{new Date().getFullYear()}
+            </span>
           </div>
         </div>
       </header>

@@ -11,20 +11,23 @@ export function FloatingNav() {
   const [isAppsOpen, setIsAppsOpen] = useState(false);
 
   return (
-    <motion.div 
-      className="fixed bottom-6 inset-x-0 mx-auto w-fit z-50 pointer-events-none"
-      initial={{ y: 20, opacity: 0, scale: 0.95 }}
-      animate={{ y: 0, opacity: 1, scale: 1 }}
-      transition={{ type: "spring", stiffness: 400, damping: 25, delay: 0.1 }}
+    <div 
+      className="fixed bottom-6 inset-x-0 z-[999] pointer-events-none flex justify-center"
+      style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
     >
+      <motion.div 
+        initial={{ y: 20, opacity: 0, scale: 0.95 }}
+        animate={{ y: 0, opacity: 1, scale: 1 }}
+        transition={{ type: "spring", stiffness: 400, damping: 25, delay: 0.1 }}
+        className="relative"
+      >
       <AnimatePresence>
         {isAppsOpen && (
           <motion.div
             initial={{ opacity: 0, y: 10, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
-            transition={{ duration: 0.2 }}
-            className="absolute bottom-full left-0 mb-4 w-72 rounded-3xl border border-black/10 dark:border-white/10 bg-white/70 dark:bg-black/70 p-4 shadow-2xl backdrop-blur-xl pointer-events-auto origin-bottom-left"
+            className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 w-[calc(100vw-2rem)] max-w-sm sm:w-72 rounded-3xl border border-black/10 dark:border-white/10 bg-white/70 dark:bg-black/70 p-4 shadow-2xl backdrop-blur-xl pointer-events-auto origin-bottom"
           >
             <div className="mb-3 px-1 text-sm font-semibold text-foreground/80 flex items-center justify-between">
               <span>Apps</span>
@@ -96,6 +99,7 @@ export function FloatingNav() {
           </Link>
         </li>
       </ul>
-    </motion.div>
+      </motion.div>
+    </div>
   );
 }

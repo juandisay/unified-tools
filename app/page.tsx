@@ -215,6 +215,9 @@ export default function Home() {
               <span className="text-[14px] sm:text-[16px] font-medium text-white/60 ml-0.5 leading-none">
                 .my.id
               </span>
+              <span className="ml-2 text-[10px] font-medium border border-white/20 text-white/50 px-1.5 py-0.5 rounded-[4px] leading-none self-center">
+                v{new Date().getFullYear()}
+              </span>
             </div>
           </Link>
 
@@ -374,21 +377,6 @@ export default function Home() {
         )}
       </AnimatePresence>
       
-      <footer className="w-full py-6 pb-8 text-black/50 dark:text-white/50 text-sm font-medium z-10 relative flex flex-col md:flex-row items-center justify-between px-6 gap-4 md:gap-0">
-        <div className="w-full md:w-1/3"></div>
-        <div className="w-full md:w-1/3"></div>
-        <div className="w-full md:w-1/3 text-center md:text-right">
-          <a 
-            href="https://juandisay.org" 
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 text-black dark:text-white opacity-60 hover:opacity-100 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/50 dark:focus-visible:ring-white/50 rounded-sm"
-            title="Created by juandisay"
-          >
-            &copy; {new Date().getFullYear()} juandisay
-          </a>
-        </div>
-      </footer>
     </div>
   );
 }

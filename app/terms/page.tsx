@@ -18,6 +18,9 @@ export default function Terms() {
           <div className="font-sans flex items-baseline tracking-tight">
             <span className="text-xl sm:text-2xl font-bold text-white leading-none">4</span>
             <span className="text-lg sm:text-xl font-medium text-white/60 leading-none">track.my.id</span>
+            <span className="ml-2 text-[10px] font-medium border border-white/20 text-white/50 px-1.5 py-0.5 rounded-[4px] leading-none self-center">
+              v{new Date().getFullYear()}
+            </span>
           </div>
         </div>
       </header>
