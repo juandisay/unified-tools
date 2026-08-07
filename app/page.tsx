@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Play, Pause, RotateCcw, Volume2, VolumeX } from "lucide-react";
+import { Play, Pause, RotateCcw, Volume2, VolumeX, Heart } from "lucide-react";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -374,8 +374,9 @@ export default function Home() {
         )}
       </AnimatePresence>
       
-      <footer className="w-full text-center py-6 pb-8 text-white/50 text-sm font-medium z-10 relative flex flex-col items-center gap-2">
-        <div className="flex items-center gap-4">
+      <footer className="w-full py-6 pb-8 text-white/50 text-sm font-medium z-10 relative flex flex-col md:flex-row items-center justify-between px-6 gap-4 md:gap-0">
+        <div className="w-full md:w-1/3"></div> {/* spacer for centering on desktop */}
+        <div className="w-full md:w-1/3 flex items-center justify-center gap-4">
           <a 
             href="/faq" 
             className="text-white/70 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 rounded-sm"
@@ -390,15 +391,15 @@ export default function Home() {
             Terms & Support
           </Link>
         </div>
-        <div>
-          Copyright © 2026 by{" "}
+        <div className="w-full md:w-1/3 text-center md:text-right">
           <a 
             href="https://juandisay.org" 
             target="_blank" 
             rel="noopener noreferrer"
-            className="text-white/70 hover:text-white transition-colors underline decoration-white/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 rounded-sm"
+            className="inline-flex items-center gap-1.5 text-white/50 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 rounded-sm"
+            title="Created by juandisay"
           >
-            juandisay
+            <Heart size={14} className="opacity-70" /> juandisay
           </a>
         </div>
       </footer>

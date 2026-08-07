@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowLeft, Clock, Repeat, VolumeX, Keyboard } from "lucide-react";
+import { ArrowLeft, Clock, Repeat, VolumeX, Keyboard, Heart } from "lucide-react";
 import Image from "next/image";
 
 export const metadata = {
@@ -95,29 +95,29 @@ export default function FAQ() {
 
       <footer className="w-full text-center py-6 pb-8 text-white/50 text-sm font-medium z-10 relative flex flex-col items-center gap-2">
         <div className="flex items-center gap-4 text-white/50">
-          <Link 
-            href="/" 
+          <Link
+            href="/"
             className="text-white/70 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 rounded-sm"
           >
             Timer
           </Link>
           <span className="text-white/30">•</span>
-          <Link 
-            href="/terms" 
+          <Link
+            href="/terms"
             className="text-white/70 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 rounded-sm"
           >
             Terms & Support
           </Link>
         </div>
         <div>
-          Copyright © 2026 by{" "}
           <a 
             href="https://juandisay.org" 
             target="_blank" 
             rel="noopener noreferrer"
-            className="text-white/70 hover:text-white transition-colors underline decoration-white/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 rounded-sm font-semibold"
+            className="inline-flex items-center gap-1.5 text-white/50 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 rounded-sm font-semibold"
+            title="Created by Juan Disay"
           >
-            Juan Disay
+            <Heart size={14} className="opacity-70" /> juandisay
           </a>
         </div>
       </footer>

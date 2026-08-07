@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Heart } from "lucide-react";
 import Image from "next/image";
 
 export const metadata = {
@@ -53,9 +53,9 @@ export default function Terms() {
               </p>
             </div>
             <div className="mt-6">
-              <a 
-                href="https://teer.id/juandisay" 
-                target="_blank" 
+              <a
+                href="https://teer.id/juandisay"
+                target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center bg-[#CCFF00] text-black font-semibold rounded-2xl px-6 py-4 hover:bg-[#bbe600] transition-colors focus:ring-4 focus:ring-[#CCFF00]/30 outline-none w-full sm:w-auto text-lg text-center"
               >
@@ -67,14 +67,14 @@ export default function Terms() {
       </main>
 
       <footer className="w-full text-center py-8 text-white/50 text-sm font-medium z-10 relative">
-        Copyright © 2026 by{" "}
         <a 
           href="https://juandisay.org" 
           target="_blank" 
           rel="noopener noreferrer"
-          className="text-white hover:text-[#CCFF00] transition-colors underline decoration-white/20 underline-offset-4 font-semibold"
+          className="inline-flex items-center gap-1.5 text-white/50 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 rounded-sm font-semibold hover:no-underline"
+          title="Created by Juan Disay"
         >
-          Juan Disay
+          <Heart size={14} className="opacity-70" /> juandisay
         </a>
       </footer>
     </div>
