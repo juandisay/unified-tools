@@ -374,32 +374,18 @@ export default function Home() {
         )}
       </AnimatePresence>
       
-      <footer className="w-full py-6 pb-8 text-white/50 text-sm font-medium z-10 relative flex flex-col md:flex-row items-center justify-between px-6 gap-4 md:gap-0">
-        <div className="w-full md:w-1/3"></div> {/* spacer for centering on desktop */}
-        <div className="w-full md:w-1/3 flex items-center justify-center gap-4">
-          <a 
-            href="/faq" 
-            className="text-white/70 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 rounded-sm"
-          >
-            FAQ & How To Use
-          </a>
-          <span className="text-white/30">•</span>
-          <Link 
-            href="/terms" 
-            className="text-white/70 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 rounded-sm"
-          >
-            Terms & Support
-          </Link>
-        </div>
+      <footer className="w-full py-6 pb-8 text-black/50 dark:text-white/50 text-sm font-medium z-10 relative flex flex-col md:flex-row items-center justify-between px-6 gap-4 md:gap-0">
+        <div className="w-full md:w-1/3"></div>
+        <div className="w-full md:w-1/3"></div>
         <div className="w-full md:w-1/3 text-center md:text-right">
           <a 
             href="https://juandisay.org" 
-            target="_blank" 
+            target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 text-white/50 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 rounded-sm"
+            className="inline-flex items-center gap-1.5 text-black dark:text-white opacity-60 hover:opacity-100 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/50 dark:focus-visible:ring-white/50 rounded-sm"
             title="Created by juandisay"
           >
-            <Heart size={14} className="opacity-70" /> juandisay
+            &copy; {new Date().getFullYear()} juandisay
           </a>
         </div>
       </footer>

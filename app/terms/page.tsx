@@ -10,13 +10,7 @@ export const metadata = {
 export default function Terms() {
   return (
     <div className="min-h-screen bg-gray-900 text-white font-sans flex flex-col items-center">
-      <header className="w-full max-w-5xl mx-auto p-4 md:p-6 flex items-center justify-between">
-        <Link href="/" className="group flex items-center gap-2 text-white/70 hover:text-white transition-colors">
-          <div className="p-2 rounded-full bg-white/10 group-hover:bg-white/20 transition-colors backdrop-blur-md">
-            <ArrowLeft size={20} />
-          </div>
-          <span className="font-semibold">Back to Timer</span>
-        </Link>
+      <header className="w-full max-w-5xl mx-auto p-4 md:p-6 flex items-center justify-end">
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white/10 border border-white/20 rounded-lg flex items-center justify-center shadow-sm backdrop-blur-md">
             <Image src="/logo.svg" alt="4track.my.id mark" width={24} height={24} className="w-5 h-5 sm:w-6 sm:h-6 object-contain" />
@@ -71,10 +65,10 @@ export default function Terms() {
           href="https://juandisay.org" 
           target="_blank" 
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 text-white/50 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 rounded-sm font-semibold hover:no-underline"
+          className="inline-flex items-center gap-1.5 text-white opacity-60 hover:opacity-100 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 rounded-sm font-semibold hover:no-underline"
           title="Created by Juan Disay"
         >
-          <Heart size={14} className="opacity-70" /> juandisay
+          &copy; {new Date().getFullYear()} juandisay
         </a>
       </footer>
     </div>
