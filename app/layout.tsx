@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter, Baloo_Tammudu_2 } from "next/font/google";
 import "./globals.css";
 import { FloatingNav } from "@/components/FloatingNav";
+import { TimerProvider } from "@/contexts/TimerContext";
+import { GlobalTimerHeader } from "@/components/GlobalTimerHeader";
 
 const inter = Inter({
   variable: "--font-sans",
@@ -68,8 +70,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`${inter.variable} ${baloo.variable} h-full antialiased font-sans`}
     >
       <body className="min-h-full flex flex-col">
-        {children}
-        <FloatingNav />
+        <TimerProvider>
+          <GlobalTimerHeader />
+          {children}
+          <FloatingNav />
+        </TimerProvider>
       </body>
     </html>
   );

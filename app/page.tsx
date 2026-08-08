@@ -31,199 +31,29 @@ function TooltipArea({ children, label }: { children: React.ReactNode, label: st
     </div>
   );
 }
-type TimerStateMode = "pomodoro" | "shortBreak" | "longBreak";
-type TimerMode = TimerStateMode | "loop";
+import { useTimer, TimerStateMode } from "@/contexts/TimerContext";
 
 export default function Home() {
-  const [mode, setMode] = useState<TimerMode>("pomodoro");
-  const [isAutoLoop, setIsAutoLoop] = useState(false);
-  const [activeStage, setActiveStage] = useState<TimerStateMode>("pomodoro");
-  const [timeLeft, setTimeLeft] = useState(25 * 60);
-  const [isRunning, setIsRunning] = useState(false);
-  const [theme, setTheme] = useState<"classic" | "dark">("classic");
-  const [isMuted, setIsMuted] = useState(false);
-  const clockAudioRef = useRef<HTMLAudioElement | null>(null);
-  const [loopStep, setLoopStep] = useState(0);
-  const [showLoopPrompt, setShowLoopPrompt] = useState(false);
+  const {
+    mode, setMode, isAutoLoop, setIsAutoLoop, activeStage, setActiveStage, 
+    timeLeft, setTimeLeft, isRunning, setIsRunning, isMuted, setIsMuted, loopStep, setLoopStep, 
+    showLoopPrompt, setShowLoopPrompt, theme, setTheme,
+    resetTimer, toggleTimer, toggleAutoLoop, formatTime
+  } = useTimer();
+  
   const [mounted, setMounted] = useState(false);
-
-  // Load theme from local storage
   useEffect(() => {
     setMounted(true);
-    const savedTheme = localStorage.getItem("theme");
-    if (savedTheme === "classic" || savedTheme === "dark") {
-      setTheme(savedTheme);
-    }
   }, []);
 
-  // Save theme to local storage
-  useEffect(() => {
-    if (mounted) {
-      localStorage.setItem("theme", theme);
-    }
-  }, [theme, mounted]);
-  useEffect(() => {
-    clockAudioRef.current = new Audio("/clock.mp3");
-    clockAudioRef.current.loop = true;
-    clockAudioRef.current.volume = 0.5; // Ensuring it blends elegantly into focus backgrounds
-    
-    return () => {
-      if (clockAudioRef.current) {
-        clockAudioRef.current.pause();
-        clockAudioRef.current = null;
-      }
-    };
-  }, []);
+  const toggleTheme = useCallback(() => {
+    setTheme(theme === "dark" ? "classic" : "dark");
+  }, [theme, setTheme]);
 
-  useEffect(() => {
-    if (clockAudioRef.current) {
-      if (isRunning && !isMuted) {
-        clockAudioRef.current.play().catch((e) => console.log("Clock auto-play blocked:", e));
-      } else {
-        clockAudioRef.current.pause();
-      }
-    }
-  }, [isRunning, isMuted]);
-
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (isRunning && timeLeft > 0) {
-      interval = setInterval(() => {
-        setTimeLeft((prev) => prev - 1);
-      }, 1000);
-    } else if (isRunning && timeLeft === 0) {
-      setIsRunning(false);
-      playNotification();
-      
-      if (isAutoLoop) {
-        const nextStep = (loopStep + 1) % 8;
-        
-        if (nextStep === 0) {
-          // We just finished step 7 (Long Break) and are about to loop back to Pomodoro
-          setShowLoopPrompt(true);
-        } else {
-          setLoopStep(nextStep);
-          const nextStage: TimerStateMode = nextStep % 2 === 0 ? "pomodoro" : (nextStep === 7 ? "longBreak" : "shortBreak");
-          setActiveStage(nextStage);
-          setMode(nextStage);
-          
-          if (nextStage === "longBreak") {
-            setTimeLeft(15 * 60);
-          } else if (nextStage === "shortBreak") {
-            setTimeLeft(5 * 60);
-          } else {
-            setTimeLeft(25 * 60);
-          }
-          setIsRunning(true);
-        }
-      }
-    }
-    return () => clearInterval(interval);
-  }, [isRunning, timeLeft, isAutoLoop, loopStep]);
-
-
-  useEffect(() => {
-    const m = Math.floor(timeLeft / 60).toString().padStart(2, "0");
-    const s = (timeLeft % 60).toString().padStart(2, "0");
-    let titleMode = "";
-    if (activeStage === "pomodoro") titleMode = "Pomodoro";
-    else if (activeStage === "shortBreak") titleMode = "Short Break";
-    else if (activeStage === "longBreak") titleMode = "Long Break";
-    document.title = `${m}:${s} - ${titleMode} | 4track.my.id`;
-  }, [timeLeft, activeStage, loopStep]);
-
-
-  const playNotification = () => {
-    if (typeof window !== "undefined") {
-      if (!isMuted) {
-        const audio = new Audio("/bell.mp3");
-        audio.play().catch(e => console.log("Audio play failed:", e));
-      }
-      if (Notification.permission === "granted") {
-        new Notification("4track.my.id", { body: "Time is up!" });
-      }
-    }
-  };
-
-  useEffect(() => {
-    if (typeof window !== "undefined" && "Notification" in window) {
-      Notification.requestPermission();
-    }
-  }, []);
-
-  const formatTime = (seconds: number) => {
-    const h = Math.floor(seconds / 3600);
-    const m = Math.floor((seconds % 3600) / 60);
-    const s = seconds % 60;
-    
-    if (h > 0) {
-      return `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
-    }
-    return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
-  };
-  const handleModeChange = (newMode: TimerStateMode) => {
-    setMode(newMode);
-    setActiveStage(newMode);
-    setIsRunning(false);
-    setIsAutoLoop(false);
-    setLoopStep(0);
-    switch (newMode) {
-      case "pomodoro":
-        setTimeLeft(25 * 60);
-        break;
-      case "shortBreak":
-        setTimeLeft(5 * 60);
-        break;
-      case "longBreak":
-        setTimeLeft(15 * 60);
-        break;
-    }
-  };
-
-  const toggleAutoLoop = () => {
-    const willEnable = !isAutoLoop;
-    setIsAutoLoop(willEnable);
-    if (willEnable) {
-      setMode("loop");
-      // Determine active stage based on current loop step
-      const currentStage: TimerStateMode = loopStep % 2 === 0 ? "pomodoro" : (loopStep === 7 ? "longBreak" : "shortBreak");
-      setActiveStage(currentStage);
-    } else {
-      setMode(activeStage);
-    }
-  };
-
-  const toggleTimer = useCallback(() => setIsRunning((prev) => !prev), []);
-
-  const resetTimer = useCallback(() => {
-    setIsRunning(false);
-    setShowLoopPrompt(false);
-    setIsAutoLoop(false);
-    setLoopStep(0);
-    setMode("pomodoro");
-    setActiveStage("pomodoro");
-    setTimeLeft(25 * 60);
-  }, []);
-
-
-  const handleLoopContinue = (continueLoop: boolean) => {
-    setShowLoopPrompt(false);
-    setLoopStep(0);
-    setActiveStage("pomodoro");
-    setMode(continueLoop ? "loop" : "pomodoro");
-    setTimeLeft(25 * 60);
-    
-    if (continueLoop) {
-      setIsRunning(true);
-      setIsAutoLoop(true);
-    } else {
-      setIsAutoLoop(false);
-    }
-  };
-
+  // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.code === "Space") {
+      if (e.code === "Space" && !showLoopPrompt) {
         e.preventDefault();
         toggleTimer();
       } else if (e.code === "Escape") {
@@ -235,6 +65,34 @@ export default function Home() {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [toggleTimer, resetTimer]);
+  const handleModeChange = useCallback((newMode: TimerStateMode) => {
+    if (isRunning) setIsRunning(false);
+    setIsAutoLoop(false);
+    setMode(newMode);
+    setActiveStage(newMode);
+    
+    if (newMode === "pomodoro") setTimeLeft(25 * 60);
+    else if (newMode === "shortBreak") setTimeLeft(5 * 60);
+    else if (newMode === "longBreak") setTimeLeft(15 * 60);
+  }, [isRunning, setIsRunning, setIsAutoLoop, setMode, setActiveStage, setTimeLeft]);
+
+  const handleLoopContinue = (continueLoop: boolean) => {
+    setShowLoopPrompt(false);
+    setLoopStep(0);
+    setActiveStage("pomodoro");
+    setMode(continueLoop ? "loop" : "pomodoro");
+    setTimeLeft(25 * 60);
+    
+    if (continueLoop) {
+      // the context logic handles starting interval properly
+      // just set states to trigger
+      setTimeout(() => setIsRunning(true), 50);
+      setIsAutoLoop(true);
+    } else {
+      setIsAutoLoop(false);
+      setIsRunning(false);
+    }
+  };
 
   const getBackgroundColor = () => {
     if (theme === "dark") return "bg-gray-900 text-white";
