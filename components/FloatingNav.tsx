@@ -56,8 +56,7 @@ export function FloatingNav() {
 
   return (
     <div 
-      className="fixed bottom-6 inset-x-0 z-[999] pointer-events-none flex justify-center"
-      style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+      className="fixed bottom-12 inset-x-0 md:inset-x-auto md:right-8 lg:right-12 md:bottom-8 z-[999] pointer-events-none flex justify-center pb-[env(safe-area-inset-bottom)]"
     >
       <motion.div 
         initial={{ y: 20, opacity: 0, scale: 0.95 }}
@@ -71,7 +70,7 @@ export function FloatingNav() {
             initial={{ opacity: 0, y: 10, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
-            className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 w-[calc(100vw-2rem)] max-w-sm sm:w-72 rounded-3xl border border-black/10 dark:border-white/10 bg-white/70 dark:bg-black/70 p-4 shadow-2xl backdrop-blur-xl pointer-events-auto origin-bottom"
+            className="absolute bottom-full left-1/2 -translate-x-1/2 md:left-auto md:right-0 md:translate-x-0 mb-4 w-[calc(100vw-2rem)] max-w-sm sm:w-72 rounded-3xl border border-black/10 dark:border-white/10 bg-white/70 dark:bg-black/70 p-4 shadow-2xl backdrop-blur-xl pointer-events-auto origin-bottom md:origin-bottom-right"
           >
             <div className="mb-3 px-1 text-sm font-semibold text-foreground/80 flex items-center justify-between">
               <span>Apps</span>

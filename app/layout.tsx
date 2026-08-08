@@ -19,8 +19,8 @@ const baloo = Baloo_Tammudu_2({
 export const metadata: Metadata = {
   metadataBase: new URL("https://4track.my.id"),
   title: {
-    default: "4track.my.id | Focus Timer",
-    template: "%s | 4track.my.id",
+    default: "Minimalist Pomodoro Focus Timer",
+    template: "%s | Minimalist Focus Timer",
   },
   description: "A free, modern, and minimalist Pomodoro timer built to help you manage your workflow and maintain deep focus.",
   keywords: [
@@ -30,7 +30,6 @@ export const metadata: Metadata = {
     "study timer",
     "work management",
     "time boxing",
-    "4track.my.id",
     "minimalist timer"
   ],
   authors: [{ name: "juandisay", url: "https://juandisay.org" }],
@@ -39,13 +38,13 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: "https://4track.my.id",
-    title: "4track.my.id | Minimalist Focus Timer",
+    title: "Minimalist Pomodoro Focus Timer",
     description: "A free, modern, and minimalist Pomodoro timer built to help you manage your workflow and maintain deep focus.",
-    siteName: "4track.my.id",
+    siteName: "Minimalist Focus Timer",
   },
   twitter: {
     card: "summary_large_image",
-    title: "4track.my.id | Minimalist Focus Timer",
+    title: "Minimalist Pomodoro Focus Timer",
     description: "Boost your productivity with this elegant, distraction-free Pomodoro timer.",
     creator: "@juandisay",
   },

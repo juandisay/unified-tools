@@ -113,7 +113,9 @@ export default function Home() {
 
   return (
     <div className={`min-h-screen flex flex-col font-sans transition-colors duration-500 ${getBackgroundColor()}`}>
+      <h1 className="sr-only">Minimalist Pomodoro Focus Timer</h1>
       <header className="w-full max-w-5xl mx-auto p-4 md:p-6 flex flex-col gap-6">
+
         {/* Top Navbar */}
         <div className="flex flex-row justify-between items-center w-full">
           <Link href="/" className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
@@ -266,9 +268,27 @@ export default function Home() {
           </div>
       </main>
 
+      {/* SEO & Internal Links Footer */}
+      <footer className="w-full max-w-5xl mx-auto px-4 pb-28 md:pb-12 mt-auto flex flex-col items-center text-center opacity-30 hover:opacity-100 transition-opacity duration-300 pointer-events-auto z-10 block">
+        <h2 className="text-xs font-semibold text-white mb-2">Minimalist Pomodoro Focus Timer Features</h2>
+        <nav aria-label="Footer Navigation">
+          <ul className="flex flex-wrap justify-center gap-4 text-[11px] text-white/70">
+            <li><Link href="/" className="hover:text-white transition-colors">Focus Timer</Link></li>
+            <li><Link href="/tasks" className="hover:text-white transition-colors">Task Management</Link></li>
+            <li><Link href="/calendar" className="hover:text-white transition-colors">Productivity Calendar</Link></li>
+            <li><Link href="/faq" className="hover:text-white transition-colors">FAQ & Info</Link></li>
+            <li><Link href="/terms" className="hover:text-white transition-colors">Terms of Use</Link></li>
+          </ul>
+        </nav>
+        <p className="mt-2 text-[10px] text-white/50 max-w-md">
+          Boost your productivity and manage your workflow with this distraction-free, elegant Pomodoro timer.
+        </p>
+      </footer>
+
       {/* Loop Confirmation Modal */}
       <AnimatePresence>
         {showLoopPrompt && (
+
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <motion.div
               initial={{ opacity: 0 }}
