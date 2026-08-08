@@ -2,14 +2,42 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Play, Pause, RotateCcw, Volume2, VolumeX, Heart } from "lucide-react";
+import { Play, Pause, RotateCcw, Volume2, VolumeX, Heart, Repeat } from "lucide-react";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-type TimerMode = "pomodoro" | "shortBreak" | "longBreak" | "loop";
+function TooltipArea({ children, label }: { children: React.ReactNode, label: string }) {
+  const [isHovered, setIsHovered] = useState(false);
+  return (
+    <div 
+      className="relative flex justify-center"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      {children}
+      <AnimatePresence>
+        {isHovered && (
+          <motion.div
+            initial={{ opacity: 0, y: 5, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 2, scale: 0.95 }}
+            transition={{ duration: 0.15, ease: "easeOut" }}
+            className="absolute bottom-full mb-3 px-3 py-1.5 bg-white dark:bg-zinc-800 text-black dark:text-white text-xs sm:text-sm font-semibold rounded-xl whitespace-nowrap shadow-sm border border-black/5 dark:border-white/10 z-50 pointer-events-none origin-bottom"
+          >
+            {label}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+type TimerStateMode = "pomodoro" | "shortBreak" | "longBreak";
+type TimerMode = TimerStateMode | "loop";
 
 export default function Home() {
   const [mode, setMode] = useState<TimerMode>("pomodoro");
+  const [isAutoLoop, setIsAutoLoop] = useState(false);
+  const [activeStage, setActiveStage] = useState<TimerStateMode>("pomodoro");
   const [timeLeft, setTimeLeft] = useState(25 * 60);
   const [isRunning, setIsRunning] = useState(false);
   const [theme, setTheme] = useState<"classic" | "dark">("classic");
@@ -67,7 +95,7 @@ export default function Home() {
       setIsRunning(false);
       playNotification();
       
-      if (mode === "loop") {
+      if (isAutoLoop) {
         const nextStep = (loopStep + 1) % 8;
         
         if (nextStep === 0) {
@@ -75,32 +103,35 @@ export default function Home() {
           setShowLoopPrompt(true);
         } else {
           setLoopStep(nextStep);
-          if (nextStep === 7) {
-            setTimeLeft(15 * 60); // long break
+          const nextStage: TimerStateMode = nextStep % 2 === 0 ? "pomodoro" : (nextStep === 7 ? "longBreak" : "shortBreak");
+          setActiveStage(nextStage);
+          setMode(nextStage);
+          
+          if (nextStage === "longBreak") {
+            setTimeLeft(15 * 60);
+          } else if (nextStage === "shortBreak") {
+            setTimeLeft(5 * 60);
           } else {
-            setTimeLeft(5 * 60); // short break
+            setTimeLeft(25 * 60);
           }
           setIsRunning(true);
         }
       }
     }
     return () => clearInterval(interval);
-  }, [isRunning, timeLeft, mode, loopStep]);
+  }, [isRunning, timeLeft, isAutoLoop, loopStep]);
+
 
   useEffect(() => {
     const m = Math.floor(timeLeft / 60).toString().padStart(2, "0");
     const s = (timeLeft % 60).toString().padStart(2, "0");
-    
     let titleMode = "";
-    if (mode === "pomodoro") titleMode = "Pomodoro";
-    else if (mode === "shortBreak") titleMode = "Short Break";
-    else if (mode === "longBreak") titleMode = "Long Break";
-    else {
-      titleMode = loopStep % 2 === 0 ? "Pomodoro" : (loopStep === 7 ? "Long Break" : "Short Break");
-    }
-    
+    if (activeStage === "pomodoro") titleMode = "Pomodoro";
+    else if (activeStage === "shortBreak") titleMode = "Short Break";
+    else if (activeStage === "longBreak") titleMode = "Long Break";
     document.title = `${m}:${s} - ${titleMode} | 4track.my.id`;
-  }, [timeLeft, mode, loopStep]);
+  }, [timeLeft, activeStage, loopStep]);
+
 
   const playNotification = () => {
     if (typeof window !== "undefined") {
@@ -130,13 +161,12 @@ export default function Home() {
     }
     return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
   };
-
-  const handleModeChange = (newMode: TimerMode) => {
+  const handleModeChange = (newMode: TimerStateMode) => {
     setMode(newMode);
+    setActiveStage(newMode);
     setIsRunning(false);
-    if (newMode !== "loop") {
-      setLoopStep(0);
-    }
+    setIsAutoLoop(false);
+    setLoopStep(0);
     switch (newMode) {
       case "pomodoro":
         setTimeLeft(25 * 60);
@@ -147,29 +177,47 @@ export default function Home() {
       case "longBreak":
         setTimeLeft(15 * 60);
         break;
-      case "loop":
-        setLoopStep(0);
-        setTimeLeft(25 * 60);
-        break;
+    }
+  };
+
+  const toggleAutoLoop = () => {
+    const willEnable = !isAutoLoop;
+    setIsAutoLoop(willEnable);
+    if (willEnable) {
+      setMode("loop");
+      // Determine active stage based on current loop step
+      const currentStage: TimerStateMode = loopStep % 2 === 0 ? "pomodoro" : (loopStep === 7 ? "longBreak" : "shortBreak");
+      setActiveStage(currentStage);
+    } else {
+      setMode(activeStage);
     }
   };
 
   const toggleTimer = useCallback(() => setIsRunning((prev) => !prev), []);
+
   const resetTimer = useCallback(() => {
     setIsRunning(false);
     setShowLoopPrompt(false);
-    handleModeChange(mode);
-  }, [mode]);
+    setIsAutoLoop(false);
+    setLoopStep(0);
+    setMode("pomodoro");
+    setActiveStage("pomodoro");
+    setTimeLeft(25 * 60);
+  }, []);
+
 
   const handleLoopContinue = (continueLoop: boolean) => {
     setShowLoopPrompt(false);
+    setLoopStep(0);
+    setActiveStage("pomodoro");
+    setMode(continueLoop ? "loop" : "pomodoro");
+    setTimeLeft(25 * 60);
+    
     if (continueLoop) {
-      setLoopStep(0);
-      setTimeLeft(25 * 60);
       setIsRunning(true);
+      setIsAutoLoop(true);
     } else {
-      setLoopStep(0);
-      setTimeLeft(25 * 60);
+      setIsAutoLoop(false);
     }
   };
 
@@ -190,11 +238,12 @@ export default function Home() {
 
   const getBackgroundColor = () => {
     if (theme === "dark") return "bg-gray-900 text-white";
-    switch (mode) {
+    if (isAutoLoop) return "bg-[#7d53a2] text-white";
+    
+    switch (activeStage) {
       case "pomodoro": return "bg-[#ba4949] text-white";
       case "shortBreak": return "bg-[#38858a] text-white";
       case "longBreak": return "bg-[#397097] text-white";
-      case "loop": return "bg-[#7d53a2] text-white";
       default: return "bg-[#ba4949] text-white";
     }
   };
@@ -250,15 +299,14 @@ export default function Home() {
           {[
             { id: "pomodoro", label: "Pomodoro", shortLabel: "Pomodoro", textColor: "text-[#ba4949]" },
             { id: "shortBreak", label: "Short Break", shortLabel: "Break", textColor: "text-[#38858a]" },
-            { id: "longBreak", label: "Long Break", shortLabel: "Long Br.", textColor: "text-[#397097]" },
-            { id: "loop", label: "Loop", shortLabel: "Loop", textColor: "text-[#7d53a2]" }
+            { id: "longBreak", label: "Long break", shortLabel: "LB", textColor: "text-[#397097]" }
           ].map((m) => (
             <button
               key={m.id}
-              onClick={() => handleModeChange(m.id as TimerMode)}
-              className="relative px-5 sm:px-6 py-2 rounded-full text-sm sm:text-base font-semibold transition-all duration-300 outline-none focus-visible:ring-2 focus-visible:ring-white/50 shrink-0"
+              onClick={() => handleModeChange(m.id as TimerStateMode)}
+              className="relative px-4 sm:px-6 py-2 rounded-full text-sm sm:text-base font-semibold transition-all duration-300 outline-none focus-visible:ring-2 focus-visible:ring-white/50 shrink-0"
             >
-              {mode === m.id && (
+              {activeStage === m.id && (
                 <motion.div
                   layoutId="active-pill"
                   className="absolute inset-0 bg-white rounded-full shadow-md"
@@ -266,7 +314,7 @@ export default function Home() {
                   transition={{ type: "spring", stiffness: 400, damping: 30 }}
                 />
               )}
-              <span className={`relative z-10 ${mode === m.id ? (theme === "dark" ? "text-gray-900" : m.textColor) : "text-white/90 hover:text-white"}`}>
+              <span className={`relative z-10 ${activeStage === m.id ? (theme === "dark" ? "text-gray-900" : m.textColor) : "text-white/90 hover:text-white"}`}>
                 <span className="hidden sm:inline">{m.label}</span>
                 <span className="sm:hidden">{m.shortLabel}</span>
               </span>
@@ -287,51 +335,68 @@ export default function Home() {
           </motion.div>
           
           <div className="flex justify-center items-center gap-4 sm:gap-6 bg-black/20 p-2 sm:p-3 rounded-full backdrop-blur-md border border-white/10 shadow-2xl">
-            <motion.button 
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={resetTimer}
-              className="w-12 h-12 sm:w-14 sm:h-14 rounded-full hover:bg-white/10 transition-colors flex items-center justify-center text-white"
-              aria-label="Reset Timer"
-            >
-              <RotateCcw className="w-5 h-5 sm:w-6 sm:h-6" strokeWidth={2.5} />
-            </motion.button>
-            <motion.button 
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={toggleTimer}
-              className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white text-gray-900 shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.25)] transition-shadow flex items-center justify-center"
-              aria-label={isRunning ? "Pause Timer" : "Start Timer"}
-            >
-              <AnimatePresence mode="popLayout" initial={false}>
-                <motion.div
-                  key={isRunning ? "pause" : "play"}
-                  initial={{ opacity: 0, scale: 0.5, rotate: -45 }}
-                  animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                  exit={{ opacity: 0, scale: 0.5, rotate: 45 }}
-                  transition={{ duration: 0.2 }}
-                  className="flex items-center justify-center"
-                >
-                  {isRunning ? (
-                    <Pause fill="currentColor" className="w-7 h-7 sm:w-8 sm:h-8" />
-                  ) : (
-                    <Play fill="currentColor" className="ml-1 w-7 h-7 sm:w-8 sm:h-8" />
-                  )}
-                </motion.div>
-              </AnimatePresence>
-            </motion.button>
-            <motion.button 
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => {
-                setIsRunning(false);
-                setTimeLeft(0);
-              }}
-              className="w-12 h-12 sm:w-14 sm:h-14 rounded-full hover:bg-white/10 transition-colors flex items-center justify-center text-white"
-              aria-label="Stop Timer"
-            >
-              <div className="w-4 h-4 sm:w-5 sm:h-5 rounded-[4px] bg-current"></div>
-            </motion.button>
+            <TooltipArea label="Reset Timer">
+              <motion.button 
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={resetTimer}
+                className="w-12 h-12 sm:w-14 sm:h-14 rounded-full hover:bg-white/10 transition-colors flex items-center justify-center text-white"
+                aria-label="Reset Timer"
+              >
+                <RotateCcw className="w-5 h-5 sm:w-6 sm:h-6" strokeWidth={2.5} />
+              </motion.button>
+            </TooltipArea>
+            <TooltipArea label={isRunning ? "Pause" : "Start"}>
+              <motion.button 
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={toggleTimer}
+                className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white text-gray-900 shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.25)] transition-shadow flex items-center justify-center"
+                aria-label={isRunning ? "Pause Timer" : "Start Timer"}
+              >
+                <AnimatePresence mode="popLayout" initial={false}>
+                  <motion.div
+                    key={isRunning ? "pause" : "play"}
+                    initial={{ opacity: 0, scale: 0.5, rotate: -45 }}
+                    animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                    exit={{ opacity: 0, scale: 0.5, rotate: 45 }}
+                    transition={{ duration: 0.2 }}
+                    className="flex items-center justify-center"
+                  >
+                    {isRunning ? (
+                      <Pause fill="currentColor" className="w-7 h-7 sm:w-8 sm:h-8" />
+                    ) : (
+                      <Play fill="currentColor" className="ml-1 w-7 h-7 sm:w-8 sm:h-8" />
+                    )}
+                  </motion.div>
+                </AnimatePresence>
+              </motion.button>
+            </TooltipArea>
+            <TooltipArea label="Stop Timer">
+              <motion.button 
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => {
+                  setIsRunning(false);
+                  setTimeLeft(0);
+                }}
+                className="w-12 h-12 sm:w-14 sm:h-14 rounded-full hover:bg-white/10 transition-colors flex items-center justify-center text-white"
+                aria-label="Stop Timer"
+              >
+                <div className="w-4 h-4 sm:w-5 sm:h-5 rounded-[4px] bg-current"></div>
+              </motion.button>
+            </TooltipArea>
+            <TooltipArea label={isAutoLoop ? "Disable Loop" : "Enable Loop"}>
+              <motion.button 
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={toggleAutoLoop}
+                className={`w-12 h-12 sm:w-14 sm:h-14 rounded-full transition-colors flex items-center justify-center ${isAutoLoop ? "bg-white/30 text-white" : "hover:bg-white/10 text-white"}`}
+                aria-label={isAutoLoop ? "Loop Mode Active" : "Enable Loop Mode"}
+              >
+                <Repeat className="w-5 h-5 sm:w-6 sm:h-6" strokeWidth={2.5} />
+              </motion.button>
+            </TooltipArea>
           </div>
       </main>
 

@@ -4,7 +4,51 @@ import Link from "next/link";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePathname } from "next/navigation";
-import { Home, Grip, Clock, Calendar, CheckSquare, Plus } from "lucide-react";
+import { Home, Grip, Clock, Calendar, CheckSquare, Plus, HelpCircle, FileText } from "lucide-react";
+import React from "react";
+
+function NavItem({ 
+  href, 
+  icon: Icon, 
+  label, 
+  isActive 
+}: { 
+  href: string, 
+  icon: React.ElementType, 
+  label: string, 
+  isActive: boolean 
+}) {
+  const [isHovered, setIsHovered] = useState(false);
+
+  return (
+    <li 
+      className="relative flex"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <Link
+        href={href}
+        aria-label={label}
+        className={`inline-flex shrink-0 items-center justify-center border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none size-9 rounded-xl ${isActive ? 'bg-gray-100 dark:bg-gray-800 text-foreground' : 'text-gray-500 hover:text-foreground hover:bg-gray-100 dark:hover:bg-gray-800'}`}
+      >
+        <Icon className="size-4 pointer-events-none shrink-0" aria-hidden="true" />
+      </Link>
+      <AnimatePresence>
+        {isHovered && (
+          <motion.div
+            initial={{ opacity: 0, y: 5, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 2, scale: 0.95 }}
+            transition={{ duration: 0.15, ease: "easeOut" }}
+            className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 px-3 py-1.5 bg-white dark:bg-zinc-800 text-black dark:text-white text-sm font-semibold rounded-xl whitespace-nowrap shadow-sm border border-black/5 dark:border-white/10 z-50 pointer-events-none origin-bottom"
+          >
+            {label}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </li>
+  );
+}
 
 export function FloatingNav() {
   const pathname = usePathname();
@@ -71,33 +115,26 @@ export function FloatingNav() {
           </button>
         </li>
 
-        <li>
-          <Link
-            href="/"
-            aria-label="Home"
-            className={`group/button inline-flex shrink-0 items-center justify-center border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none size-9 rounded-xl ${pathname === '/' ? 'bg-gray-100 dark:bg-gray-800 text-foreground' : 'text-gray-500 hover:text-foreground hover:bg-gray-100 dark:hover:bg-gray-800'}`}
-          >
-            <Home className="size-4 pointer-events-none shrink-0" aria-hidden="true" />
-          </Link>
-        </li>
+        <NavItem 
+          href="/" 
+          icon={Home} 
+          label="Timer" 
+          isActive={pathname === '/'} 
+        />
         
-        <li>
-          <Link
-            href="/faq"
-            className={`group/button inline-flex shrink-0 items-center justify-center border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none h-9 px-3 rounded-xl ${pathname === '/faq' ? 'bg-gray-100 dark:bg-gray-800 text-foreground' : 'text-gray-500 hover:text-foreground hover:bg-gray-100 dark:hover:bg-gray-800'}`}
-          >
-            FAQ
-          </Link>
-        </li>
+        <NavItem 
+          href="/faq" 
+          icon={HelpCircle} 
+          label="FAQ & Info" 
+          isActive={pathname === '/faq'} 
+        />
 
-        <li>
-          <Link
-            href="/terms"
-            className={`group/button inline-flex shrink-0 items-center justify-center border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none h-9 px-3 rounded-xl ${pathname === '/terms' ? 'bg-gray-100 dark:bg-gray-800 text-foreground' : 'text-gray-500 hover:text-foreground hover:bg-gray-100 dark:hover:bg-gray-800'}`}
-          >
-            Terms
-          </Link>
-        </li>
+        <NavItem 
+          href="/terms" 
+          icon={FileText} 
+          label="Terms & Support" 
+          isActive={pathname === '/terms'} 
+        />
       </ul>
       </motion.div>
     </div>
