@@ -80,24 +80,24 @@ export function FloatingNav() {
               </button>
             </div>
             <div className="grid grid-cols-4 gap-4">
-              <button className="flex flex-col items-center gap-2 group">
-                <div className="w-12 h-12 rounded-2xl bg-black/5 dark:bg-white/5 flex items-center justify-center border border-black/5 dark:border-white/5 shadow-sm group-hover:scale-105 transition-transform text-foreground">
+              <Link href="/" className="flex flex-col items-center gap-2 group" onClick={() => setIsAppsOpen(false)}>
+                <div className={`w-12 h-12 rounded-2xl ${pathname === '/' ? 'bg-black/10 dark:bg-white/10 shadow-md text-foreground' : 'bg-black/5 dark:bg-white/5 shadow-sm text-foreground/50'} flex items-center justify-center border border-black/5 dark:border-white/5 group-hover:scale-105 transition-transform`}>
                   <Clock className="size-5" />
                 </div>
-                <span className="text-[10px] font-medium text-foreground/70">Timer</span>
-              </button>
-              <button className="flex flex-col items-center gap-2 group">
-                <div className="w-12 h-12 rounded-2xl bg-black/5 dark:bg-white/5 flex items-center justify-center border border-black/5 dark:border-white/5 shadow-sm group-hover:scale-105 transition-transform text-foreground/50">
+                <span className={`text-[10px] font-medium ${pathname === '/' ? 'text-foreground' : 'text-foreground/50'}`}>Timer</span>
+              </Link>
+              <Link href="/tasks" className="flex flex-col items-center gap-2 group" onClick={() => setIsAppsOpen(false)}>
+                <div className={`w-12 h-12 rounded-2xl ${pathname === '/tasks' ? 'bg-black/10 dark:bg-white/10 shadow-md text-foreground' : 'bg-black/5 dark:bg-white/5 shadow-sm text-foreground/50'} flex items-center justify-center border border-black/5 dark:border-white/5 group-hover:scale-105 transition-transform`}>
                   <CheckSquare className="size-5" />
                 </div>
-                <span className="text-[10px] font-medium text-foreground/50">Tasks</span>
-              </button>
-              <button className="flex flex-col items-center gap-2 group">
-                <div className="w-12 h-12 rounded-2xl bg-black/5 dark:bg-white/5 flex items-center justify-center border border-black/5 dark:border-white/5 shadow-sm group-hover:scale-105 transition-transform text-foreground/50">
+                <span className={`text-[10px] font-medium ${pathname === '/tasks' ? 'text-foreground' : 'text-foreground/50'}`}>Tasks</span>
+              </Link>
+              <Link href="/calendar" className="flex flex-col items-center gap-2 group" onClick={() => setIsAppsOpen(false)}>
+                <div className={`w-12 h-12 rounded-2xl ${pathname === '/calendar' ? 'bg-black/10 dark:bg-white/10 shadow-md text-foreground' : 'bg-black/5 dark:bg-white/5 shadow-sm text-foreground/50'} flex items-center justify-center border border-black/5 dark:border-white/5 group-hover:scale-105 transition-transform`}>
                   <Calendar className="size-5" />
                 </div>
-                <span className="text-[10px] font-medium text-foreground/50">Soon</span>
-              </button>
+                <span className={`text-[10px] font-medium ${pathname === '/calendar' ? 'text-foreground' : 'text-foreground/50'}`}>Calendar</span>
+              </Link>
             </div>
           </motion.div>
         )}
