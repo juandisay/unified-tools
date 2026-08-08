@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect, useRef, useCallback } from "react";
+import { sendGAEvent } from "@next/third-parties/google";
 
 export type TimerStateMode = "pomodoro" | "shortBreak" | "longBreak";
 export type TimerMode = TimerStateMode | "loop";
@@ -174,6 +175,11 @@ export function TimerProvider({ children }: { children: React.ReactNode }) {
           setTimeLeft(0);
           targetEndTimeRef.current = null;
           playNotification();
+
+          sendGAEvent("event", "timer_complete", {
+            timer_stage: activeStage,
+            is_auto_loop: isAutoLoop
+          });
           
           if (isAutoLoop) {
             const nextStep = (loopStep + 1) % 8;
@@ -207,6 +213,10 @@ export function TimerProvider({ children }: { children: React.ReactNode }) {
 
   // Handlers
   const resetTimer = useCallback(() => {
+    sendGAEvent("event", "timer_reset", {
+      timer_stage: activeStage
+    });
+
     setIsRunning(false);
     targetEndTimeRef.current = null;
     setShowLoopPrompt(false);
@@ -227,6 +237,11 @@ export function TimerProvider({ children }: { children: React.ReactNode }) {
 
   const toggleTimer = useCallback(() => {
     if (showLoopPrompt && !isRunning) {
+      sendGAEvent("event", "timer_start", {
+        timer_stage: "pomodoro",
+        is_auto_loop: isAutoLoop
+      });
+
       setShowLoopPrompt(false);
       setLoopStep(0);
       setActiveStage("pomodoro");
@@ -236,6 +251,12 @@ export function TimerProvider({ children }: { children: React.ReactNode }) {
       setIsRunning(true);
     } else {
       if (!isRunning) {
+        sendGAEvent("event", "timer_start", {
+          timer_stage: activeStage,
+          is_auto_loop: isAutoLoop,
+          time_left: timeLeft
+        });
+
         if (timeLeft === 0) {
            const nextDur = activeStage === "pomodoro" ? 25*60 : (activeStage === "shortBreak" ? 5*60 : 15*60);
            setTimeLeft(nextDur);
@@ -244,15 +265,23 @@ export function TimerProvider({ children }: { children: React.ReactNode }) {
            targetEndTimeRef.current = Date.now() + timeLeft * 1000;
         }
       } else {
+        sendGAEvent("event", "timer_pause", {
+          timer_stage: activeStage,
+          is_auto_loop: isAutoLoop,
+          time_left: timeLeft
+        });
         targetEndTimeRef.current = null;
       }
       setIsRunning(!isRunning);
     }
-  }, [isRunning, showLoopPrompt, activeStage, timeLeft]);
+  }, [isRunning, showLoopPrompt, activeStage, timeLeft, isAutoLoop]);
 
   const toggleAutoLoop = useCallback(() => {
+    sendGAEvent("event", "toggle_auto_loop", {
+      is_auto_loop_enabled: !isAutoLoop
+    });
+    
     if (!isAutoLoop) {
-      setMode("loop");
       setTimeout(() => {
         setIsRunning(true);
         targetEndTimeRef.current = Date.now() + timeLeft * 1000;

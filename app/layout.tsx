@@ -4,6 +4,7 @@ import "./globals.css";
 import { FloatingNav } from "@/components/FloatingNav";
 import { TimerProvider } from "@/contexts/TimerContext";
 import { GlobalTimerHeader } from "@/components/GlobalTimerHeader";
+import { GoogleAnalytics } from '@next/third-parties/google';
 
 const inter = Inter({
   variable: "--font-sans",
@@ -75,6 +76,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {children}
           <FloatingNav />
         </TimerProvider>
+          <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID || "G-2PT41BMK3F"} />
       </body>
     </html>
   );

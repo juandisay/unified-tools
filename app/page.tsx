@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Play, Pause, RotateCcw, Volume2, VolumeX, Heart, Repeat } from "lucide-react";
 import { useState, useEffect, useCallback, useRef } from "react";
+import { sendGAEvent } from "@next/third-parties/google";
 import { motion, AnimatePresence } from "framer-motion";
 
 function TooltipArea({ children, label }: { children: React.ReactNode, label: string }) {
@@ -47,6 +48,7 @@ export default function Home() {
   }, []);
 
   const toggleTheme = useCallback(() => {
+    sendGAEvent("event", "toggle_theme", { theme_selected: theme === "dark" ? "classic" : "dark" });
     setTheme(theme === "dark" ? "classic" : "dark");
   }, [theme, setTheme]);
 
@@ -66,6 +68,8 @@ export default function Home() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [toggleTimer, resetTimer]);
   const handleModeChange = useCallback((newMode: TimerStateMode) => {
+    sendGAEvent("event", "change_mode", { new_mode: newMode });
+
     if (isRunning) setIsRunning(false);
     setIsAutoLoop(false);
     setMode(newMode);
@@ -77,6 +81,7 @@ export default function Home() {
   }, [isRunning, setIsRunning, setIsAutoLoop, setMode, setActiveStage, setTimeLeft]);
 
   const handleLoopContinue = (continueLoop: boolean) => {
+    sendGAEvent("event", "loop_continue_prompt", { action: continueLoop ? "continue" : "cancel" });
     setShowLoopPrompt(false);
     setLoopStep(0);
     setActiveStage("pomodoro");
@@ -131,7 +136,10 @@ export default function Home() {
           {/* Theme Toggle */}
           <div className="flex items-center gap-3 sm:gap-4">
             <button
-              onClick={() => setIsMuted(!isMuted)}
+              onClick={() => {
+                sendGAEvent("event", "toggle_mute", { is_muted: !isMuted });
+                setIsMuted(!isMuted);
+              }}
               className="w-8 h-8 flex items-center justify-center rounded-full bg-black/20 hover:bg-black/30 transition-colors backdrop-blur-sm border border-white/10 text-white"
               aria-label={isMuted ? "Unmute sounds" : "Mute sounds"}
             >

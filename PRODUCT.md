@@ -13,6 +13,9 @@ A simple, distraction-free Pomodoro timer (TomoTimers) that helps users stay on 
 ## Brand Personality
 Simple, focused, minimalist, stark, but enhanced with intentional animations to keep the experience engaging.
 
+
+### Environment Variables
+- `NEXT_PUBLIC_GA_ID`: Set this to your Google Analytics 4 Measurement ID (e.g., `G-XXXXXXXXXX`) to enable tracking.
 ## Anti-references
 - Cluttered dashboards.
 - Overly complex settings or menus that distract from the timer.
