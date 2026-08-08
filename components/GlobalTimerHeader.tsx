@@ -21,7 +21,7 @@ export function GlobalTimerHeader() {
         initial={{ y: -50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: -50, opacity: 0 }}
-        className="fixed top-0 inset-x-0 z-50 flex justify-center p-4 pointer-events-none"
+        className="fixed top-0 inset-x-0 z-50 flex justify-end sm:justify-center p-4 pointer-events-none"
       >
         <div className="flex items-center gap-4 bg-black/40 dark:bg-white/10 backdrop-blur-xl border border-white/10 dark:border-white/5 shadow-2xl px-5 py-2.5 rounded-full pointer-events-auto">
           <div className="flex flex-col">

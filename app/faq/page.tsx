@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowLeft, Clock, Repeat, VolumeX, Keyboard, Heart } from "lucide-react";
 import Image from "next/image";
+import { PageBackground } from "@/components/PageBackground";
 
 export const metadata = {
   title: "FAQ & Usage | 4track.my.id",
@@ -9,9 +10,9 @@ export const metadata = {
 
 export default function FAQ() {
   return (
-    <div className="min-h-screen bg-gray-900 text-white font-sans flex flex-col items-center">
-      <header className="w-full max-w-5xl mx-auto p-4 md:p-6 flex items-center justify-end">
-        <div className="flex items-center gap-2.5">
+    <PageBackground className="font-sans items-center text-white">
+      <header className="w-full max-w-5xl mx-auto p-4 md:p-6 flex items-center justify-between">
+        <Link href="/" className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
           <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white/10 border border-white/20 rounded-lg flex items-center justify-center shadow-sm backdrop-blur-md">
             <Image src="/logo.svg" alt="4track.my.id mark" width={24} height={24} className="w-5 h-5 sm:w-6 sm:h-6 object-contain" />
           </div>
@@ -22,7 +23,7 @@ export default function FAQ() {
               v{new Date().getFullYear()}
             </span>
           </div>
-        </div>
+        </Link>
       </header>
 
       <main className="flex-1 w-full max-w-3xl px-4 py-12 flex flex-col gap-12">
@@ -118,6 +119,6 @@ export default function FAQ() {
           </a>
         </div>
       </footer>
-    </div>
+    </PageBackground>
   );
 }
