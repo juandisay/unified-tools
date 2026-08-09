@@ -60,7 +60,9 @@ export const metadata: Metadata = {
     },
   },
   icons: {
-    icon: "/icon.svg",
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml", sizes: "any" }
+    ],
   },
 };
 export default function RootLayout({ children }: { children: React.ReactNode }) {
